@@ -14,7 +14,6 @@ from visualize import draw_map
 def find_closest(location, centroids):
     """Return the centroid in centroids that is closest to location.
     If multiple centroids are equally close, return the first one.
-
     >>> find_closest([3.0, 4.0], [[0.0, 0.0], [2.0, 3.0], [4.0, 3.0], [5.0, 5.0]])
     [2.0, 3.0]
     """
@@ -29,10 +28,8 @@ def find_closest(location, centroids):
 def group_by_first(pairs):
     """Return a list of pairs that relates each unique key in the [key, value]
     pairs to a list of all values that appear paired with that key.
-
     Arguments:
     pairs -- a sequence of pairs
-
     >>> example = [ [1, 2], [3, 2], [2, 4], [1, 3], [3, 1], [1, 2] ]
     >>> group_by_first(example)
     [[2, 3, 2], [2, 1], [4]]
@@ -61,7 +58,7 @@ def group_by_centroid(restaurants, centroids):
 def find_centroid(cluster):
     """Return the centroid of the locations of the restaurants in cluster."""
     # BEGIN Question 5
-    location_list=[restaurant_location(i) for i in restaurants]
+    location_list=[restaurant_location(i) for i in cluster]
     latitude=mean([i[0] for i in location_list])
     longitude=mean([i[1] for i in location_list])
     return [latitude,longitude]
@@ -94,7 +91,6 @@ def find_predictor(user, restaurants, feature_fn):
     """Return a rating predictor (a function from restaurants to ratings),
     for a user by performing least-squares linear regression using feature_fn
     on the items in restaurants. Also, return the R^2 value of this model.
-
     Arguments:
     user -- A user
     restaurants -- A sequence of restaurants
@@ -107,7 +103,22 @@ def find_predictor(user, restaurants, feature_fn):
     ys = [reviews_by_user[restaurant_name(r)] for r in restaurants]
 
     # BEGIN Question 7
-    b, a, r_squared = 0, 0, 0  # REPLACE THIS LINE WITH YOUR SOLUTION
+    sxx_sub=[i-mean(xs) for i in xs]
+    sxx=0
+    for i in range(len(sxx_sub)):
+        sxx+=sxx_sub[i]*sxx_sub[i]
+
+    syy_sub=[j-mean(ys) for j in ys]
+    syy=0
+    for j in range(len(syy_sub)):
+        syy+=syy_sub[j]*syy_sub[j]
+    sxy=0
+    for k in range(len(sxx_sub)):
+        sxy+=sxx_sub[k]*syy_sub[k]
+
+    b=sxy/sxx
+    a=mean(ys)-b*mean(xs)
+    r_squared=sxy*sxy/(sxx*syy) # REPLACE THIS LINE WITH YOUR SOLUTION
     # END Question 7
 
     def predictor(restaurant):
@@ -119,7 +130,6 @@ def find_predictor(user, restaurants, feature_fn):
 def best_predictor(user, restaurants, feature_fns):
     """Find the feature within feature_fns that gives the highest R^2 value
     for predicting ratings by the user; return a predictor using that feature.
-
     Arguments:
     user -- A user
     restaurants -- A list of restaurants
@@ -143,7 +153,6 @@ def best_predictor(user, restaurants, feature_fns):
 def rate_all(user, restaurants, feature_fns):
     """Return the predicted ratings of restaurants by user using the best
     predictor based on a function from feature_fns.
-
     Arguments:
     user -- A user
     restaurants -- A list of restaurants
@@ -152,19 +161,30 @@ def rate_all(user, restaurants, feature_fns):
     predictor = best_predictor(user, ALL_RESTAURANTS, feature_fns)
     reviewed = user_reviewed_restaurants(user, restaurants)
     # BEGIN Question 9
-    new_dict= dict(restaurants)
-    for i in list(restaurants.keys()):
-        if i in reviewed:
-            new_dict[i]=user_rating(user,i)
-        else:
-            new_dict[i]=predictor(restaurants[i])
-    return new_dict
+    # new_dict= dict(restaurants)
+    # for i in list(restaurants.keys()):
+    #     if i in reviewed:
+    #         new_dict[i]=user_rating(user,i)
+    #     else:
+    #         new_dict[i]=predictor(restaurants[i])
+    # return new_dict
+
+    rest_names = [restaurant_name(restaurant) for restaurant in restaurants]
+    pred_rest_ratings = [predictor(restaurant) for restaurant in restaurants] 
+    dict_all = {name: rating for name, rating in zip(rest_names, pred_rest_ratings)}
+
+    reviewed_names = [restaurant_name(restaurant) for restaurant in reviewed]
+    user_rest_ratings = [user_rating(user, restaurant) for restaurant in reviewed_names]
+    dict_user = {name: rating for name, rating in zip(reviewed_names, user_rest_ratings)}
+    
+    dict_all.update(dict_user)
+    
+    return dict_all
     # END Question 9
 
 
 def search(query, restaurants):
     """Return each restaurant in restaurants that has query as a category.
-
     Arguments:
     query -- A string
     restaurants -- A sequence of restaurants

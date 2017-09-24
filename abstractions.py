@@ -42,7 +42,6 @@ def user_reviews(user):
 
 def user_reviewed_restaurants(user, restaurants):
     """Return the subset of restaurants reviewed by user.
-
     Arguments:
     user -- a user
     restaurants -- a list of restaurant data abstractions
@@ -99,5 +98,5 @@ def restaurant_ratings(restaurant):
     """Return a list of ratings, which are numbers from 1 to 5, of the
     restaurant based on the reviews of the restaurant."""
     # BEGIN Question 2
-    return restaurant['ratings']
+    return [review_rating(r) for r in restaurant['reviews']]
     # END Question 2

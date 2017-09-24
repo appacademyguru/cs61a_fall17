@@ -9,7 +9,6 @@ _zip = zip
 def map_and_filter(s, map_fn, filter_fn):
     """Returns a new list containing the results of calling map_fn on each
     element of sequence s for which filter_fn returns a true value.
-
     >>> square = lambda x: x * x
     >>> is_odd = lambda x: x % 2 == 1
     >>> map_and_filter([1, 2, 3, 4, 5], square, is_odd)
@@ -21,7 +20,6 @@ def map_and_filter(s, map_fn, filter_fn):
 
 def key_of_min_value(d):
     """Returns the key in a dict d that corresponds to the minimum value of d.
-
     >>> letters = {'a': 6, 'b': 5, 'c': 4, 'd': 5}
     >>> min(letters)
     'a'
@@ -29,13 +27,13 @@ def key_of_min_value(d):
     'c'
     """
     # BEGIN Question 0
+    # lambda x: abs(x[0] - x[1])
     return min(d, key=d.get)
     # END Question 0
 
 def zip(*sequences):
     """Returns a list of lists, where the i-th list contains the i-th
     element from each of the argument sequences.
-
     >>> zip(range(0, 3), range(3, 6))
     [[0, 3], [1, 4], [2, 5]]
     >>> for a, b in zip([1, 2, 3], [4, 5, 6]):
@@ -54,7 +52,6 @@ def zip(*sequences):
 def enumerate(s, start=0):
     """Returns a list of lists, where the i-th list contains i+start and
     the i-th element of s.
-
     >>> enumerate([6, 1, 'a'])
     [[0, 6], [1, 1], [2, 'a']]
     >>> enumerate('five', 5)
@@ -66,7 +63,6 @@ def enumerate(s, start=0):
 
 def distance(pos1, pos2):
     """Returns the Euclidean distance between pos1 and pos2, which are pairs.
-
     >>> distance([1, 2], [4, 6])
     5.0
     """
@@ -74,7 +70,6 @@ def distance(pos1, pos2):
 
 def mean(s):
     """Returns the arithmetic mean of a sequence of numbers s.
-
     >>> mean([-1, 3])
     1.0
     >>> mean([0, -3, 2, -1])
